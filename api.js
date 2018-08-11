@@ -61,7 +61,7 @@ module.exports = function(db){
 
 // 2-PART Function that takes token and checks for top 5 artist
 
-  router.get('hello', function(req, res) {
+  router.get('/hello', function(req, res) {
     res.send("hello");
   })
 
