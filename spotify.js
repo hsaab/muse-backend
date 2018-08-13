@@ -60,7 +60,7 @@ module.exports = function(db){
     var code = req.query.code || null;
     var state = req.query.state || null;
     var storedState = req.cookies ? req.cookies[stateKey] : null;
-
+    console.log('beginning of callback HERE');
     if (state === null || state !== storedState) {
       res.redirect('/#' +
         querystring.stringify({
