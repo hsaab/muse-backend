@@ -66,6 +66,7 @@ module.exports = function(db){
         querystring.stringify({
           error: 'state_mismatch'
         }));
+        console.log('state mismatch');
     } else {
       res.clearCookie(stateKey);
       var authOptions = {
@@ -80,7 +81,7 @@ module.exports = function(db){
         },
         json: true
       };
-
+      console.log('before sending post to get data');
       request.post(authOptions, function(error, response, body) {
         if (!error && response.statusCode === 200) {
 
@@ -92,7 +93,7 @@ module.exports = function(db){
             headers: { 'Authorization': 'Bearer ' + access_token },
             json: true
           };
-
+          console.log('inside post to get auth to grab data');
           // use the access token to access the Spotify Web API
           request.get(options, function(error, response, body) {
             console.log('getting spotify data', body, response);
