@@ -30,36 +30,6 @@ router.use(cors());
 router.use(cookieParser());
 
 module.exports = function(db){
-// A Enter user info into db and logs in spotify
-// 1 - Validate email and location entries
-// 2 - GET /authorize & add the following as queries,
-//      1. need clientid,
-//      2. secret
-//      3. redirecturi
-//      4. state
-//      5. scope [user-top-read]
-
-// B  Get Spotify Code
-// 1 - GET /callback
-// 2 - If user authorized then code will be there as a query param, if not then error will exist
-
-// C If user authorized, Get Spotify token
-// 1 - POST /api/token & add the following in the body
-//      1. grant type ("authorization_code")
-//      2. code
-//      3. same redirect uri as above
-//      4. Header param Authorization: Basic *<base64 encoded client_id:client_secret>*
-// 2 - Rout will return access_token, expires_in, and refresh_token
-
-// D Use the access_token to access the data
-// 1 - Check if access_token has expired if SO then refresh
-//      1. POST /api/token and will contain --
-//      1a. grant type (refresh token)
-//      1b. refresh token (from earlier)
-//      1c. header Authorization: Basic <base64 encoded client_id:client_secret>
-// 1 - Route for personalization endpoint
-
-// 2-PART Function that takes token and checks for top 5 artist
 
   router.get('/hello', function(req, res) {
     res.send("hello");
@@ -118,22 +88,16 @@ module.exports = function(db){
               refresh_token = body.refresh_token;
 
           var options = {
-            url: 'https://api.spotify.com/v1/me',
+            url: 'https://api.spotify.com/v1/me/top/artists',
             headers: { 'Authorization': 'Bearer ' + access_token },
             json: true
           };
 
           // use the access token to access the Spotify Web API
           request.get(options, function(error, response, body) {
-            console.log(body);
+            console.log('getting spotify data', body, response);
+            //@@@@@@@@@ HERE -- add access_token, refresh_token, email, location, top 20 artist data to DB
           });
-
-          // we can also pass the token to the browser to make requests from there
-          res.redirect('/#' +
-            querystring.stringify({
-              access_token: access_token,
-              refresh_token: refresh_token
-            }));
         } else {
           res.redirect('/#' +
             querystring.stringify({
@@ -167,6 +131,6 @@ module.exports = function(db){
       }
     });
   });
-  
+
   return router;
 }
