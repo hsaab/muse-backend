@@ -100,7 +100,7 @@ module.exports = function(db) {
           console.log('inside post to get auth to grab data');
           // use the access token to access the Spotify Web API
           request.get(options, function(error, response, body) {
-            res.json(response, body);
+            res.json(response, body, error);
             console.log('getting spotify data', body, response);
             //@@@@@@@@@ HERE -- add access_token, refresh_token, email, location, top 20 artist data to DB
           });
