@@ -30,7 +30,7 @@ app.use(function(req, res, next) {
   next();
 });
 
-app.use('/spotify', api(db));
+app.use('/spotify', spotify(db));
 
 var port = process.env.PORT || 3001;
 app.listen(port);
