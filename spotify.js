@@ -35,6 +35,10 @@ module.exports = function(db){
     res.send("hello");
   })
 
+  router.get('/yo', function(req, res) {
+    res.send("yoyo");
+  })
+
   router.get('/login', function(req, res) {
 
     var state = generateRandomString(16);
