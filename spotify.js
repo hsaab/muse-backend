@@ -97,11 +97,11 @@ module.exports = function(db) {
             headers: { 'Authorization': 'Bearer ' + access_token },
             json: true
           };
-          console.log('inside post to get auth to grab data');
+          console.log('inside post to get auth to grab data', error);
           // use the access token to access the Spotify Web API
           request.get(options, function(error, response, body) {
             res.json(response, body, error);
-            console.log('getting spotify data', body, response);
+            console.log('getting spotify data', body, response, error);
             //@@@@@@@@@ HERE -- add access_token, refresh_token, email, location, top 20 artist data to DB
           });
         } else {
