@@ -85,8 +85,8 @@ module.exports = function(db){
       request.post(authOptions, function(error, response, body) {
         if (!error && response.statusCode === 200) {
 
-          var access_token = body.access_token,
-              refresh_token = body.refresh_token;
+          var access_token = body.access_token;
+          var refresh_token = body.refresh_token;
 
           var options = {
             url: 'https://api.spotify.com/v1/me/top/artists',
