@@ -29,15 +29,15 @@ router.use(bodyParser.urlencoded({ extended: false }));
 router.use(cors());
 router.use(cookieParser());
 
-module.exports = function(db){
+module.exports = function(db) {
 
   router.get('/hello', function(req, res) {
     res.send("hello");
-  })
+  });
 
   router.get('/yo', function(req, res) {
     res.send("yoyo");
-  })
+  });
 
   router.get('/login', function(req, res) {
 

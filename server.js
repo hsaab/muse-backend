@@ -1,7 +1,7 @@
 let express = require("express");
 let bodyParser = require('body-parser');
 let db = require('./pool.js');
-let api = require('./api.js');
+let spotify = require('./spotify.js');
 let path = require('path');
 let helmet = require('helmet');
 let RateLimit = require('express-rate-limit');
@@ -30,7 +30,7 @@ app.use(function(req, res, next) {
   next();
 });
 
-app.use('/api', api(db));
+app.use('/spotify', api(db));
 
 var port = process.env.PORT || 3001;
 app.listen(port);
