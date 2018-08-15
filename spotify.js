@@ -112,8 +112,10 @@ module.exports = function(db) {
           };
           // use the access token to access the Spotify Web API
           request.get(options, function(error, response, body) {
+            console.log(body.items, body.items.json());
+            let artistInfo = body.items.json();
             db.query(`UPDATE users SET access_token = $1, refresh_token = $2, artists = $3 WHERE state = $4`,
-              [access_token, refresh_token, body.items, state])
+              [access_token, refresh_token, artistInfo, state])
               .then(() => {
                 res.redirect('https://muse-hs.herokuapp.com/');
               })
