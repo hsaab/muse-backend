@@ -48,6 +48,7 @@ var getArtists = async function(tokens, state) {
     json: true
   };
   let data = await request.get(options);
+  console.log("artist info", data);
   return JSON.stringify(data.items);
 }
 

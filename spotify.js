@@ -76,7 +76,7 @@ module.exports = function(db) {
       db.query(`UPDATE users SET access_token = $1, refresh_token = $2, artists = $3 WHERE state = $4`,
         [tokens.access_token, tokens.refresh_token, artistData, state])
         .then(() => {
-          res.redirect('localhost:3000');
+          res.redirect('localhost:3000/success');
         })
         .catch((e) => {
           console.log(e);
