@@ -49,9 +49,8 @@ var getArtists = async function(tokens, state) {
   };
   let result = await request.get(options);
   let data = await result.body;
-  let items = await data.items;
-  console.log(data, items);
-  return JSON.stringify(items);
+  console.log(data);
+  return JSON.stringify(data);
 }
 
 module.exports = { generateRandomString, getToken, getArtists };
