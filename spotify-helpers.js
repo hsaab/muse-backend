@@ -43,6 +43,7 @@ var getToken = async function(code) {
 }
 
 var getArtists = async function(tokens, state) {
+  console.log(tokens);
   var options = {
     url: 'https://api.spotify.com/v1/me/top/artists',
     headers: { 'Authorization': 'Bearer ' + tokens.access_token },
