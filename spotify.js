@@ -118,6 +118,7 @@ module.exports = function(db) {
                 res.redirect('https://muse-hs.herokuapp.com/');
               })
               .catch((e) => {
+                console.log(e);
                 res.status(500).json({ success: false });
               })
           });
