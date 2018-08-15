@@ -35,6 +35,7 @@ var getToken = async function(code) {
     };
     let result = await request.post(authOptions);
     let data = await result.body;
+    console.log(result, data);
     return data;
   } catch (e) {
     console.log('getting token error', e);
