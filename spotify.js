@@ -31,46 +31,62 @@ router.use(cookieParser());
 
 module.exports = function(db) {
 
-  router.get('/hello', function(req, res) {
-    res.send("hello");
-  });
-
   router.get('/yo', function(req, res) {
     res.send("yoyo");
   });
 
+  router.get('test', function(req, res) {
+    var email = req.query.email || null;
+    var location = req.query.location || null;
+    db.query(`SELECT email, location FROM users WHERE email = $1, location = $2`, [email, location])
+      .then((result) => {
+        if(result.rowCount === 1) {
+          res.json({ success: true, existing: true });
+        } else {
+          res.json({ success: true, existing: false });
+        }
+      })
+      .catch((e) => {
+        res.status(500).json({ success: false });
+      })
+  });
+
   router.get('/login', function(req, res) {
+    //here check if we already have user
+    //if we already have user then send us back saying there's already a user
 
     var state = generateRandomString(16);
     res.cookie(stateKey, state);
-
-    // your application requests authorization
-    var scope = 'user-top-read';
-    res.redirect('https://accounts.spotify.com/authorize?' +
-      querystring.stringify({
-        response_type: 'code',
-        client_id: client_id,
-        scope: scope,
-        redirect_uri: redirect_uri,
-        state: state
-      }));
+    // application requests authorization
+    db.query(`INSERT INTO users (email, location, state) VALUES ($1, $2, $3)`,
+    [req.body.email, req.body.location, state])
+      .then(() => {
+        var scope = 'user-top-read';
+        res.redirect('https://accounts.spotify.com/authorize?' +
+          querystring.stringify({
+            response_type: 'code',
+            client_id: client_id,
+            scope: scope,
+            redirect_uri: redirect_uri,
+            state: state
+          }));
+      });
+      .catch((e) => {
+        res.status(500).json({ success: false });
+      })
   });
 
   router.get('/callback', function(req, res) {
-
     // your application requests refresh and access tokens
     // after checking the state parameter
-
     var code = req.query.code || null;
     var state = req.query.state || null;
     var storedState = req.cookies ? req.cookies[stateKey] : null;
-    console.log('beginning of callback HERE');
     if (state === null || state !== storedState) {
       res.redirect('/#' +
         querystring.stringify({
           error: 'state_mismatch'
         }));
-        console.log('state mismatch');
     } else {
       res.clearCookie(stateKey);
       var authOptions = {
@@ -85,7 +101,6 @@ module.exports = function(db) {
         },
         json: true
       };
-      console.log('before sending post to get data');
       request.post(authOptions, function(error, response, body) {
         if (!error && response.statusCode === 200) {
 
@@ -97,12 +112,17 @@ module.exports = function(db) {
             headers: { 'Authorization': 'Bearer ' + access_token },
             json: true
           };
-          console.log('inside post to get auth to grab data', error);
           // use the access token to access the Spotify Web API
           request.get(options, function(error, response, body) {
-            res.json(response, body, error);
-            console.log('getting spotify data', body, response, error);
-            //@@@@@@@@@ HERE -- add access_token, refresh_token, email, location, top 20 artist data to DB
+            db.query(`INSERT INTO users (access_token, refresh_token, artists) VALUES($1, $2, $3)
+            WHERE state = $4`,
+            [access_token, refresh_token, body.items, state])
+              .then(() => {
+                res.redirect('https://muse-hs.herokuapp.com/');
+              })
+              .catch((e) => {
+                res.status(500).json({ success: false });
+              })
           });
         } else {
           res.redirect('/#' +
@@ -115,7 +135,6 @@ module.exports = function(db) {
   });
 
   router.get('/refresh_token', function(req, res) {
-
     // requesting access token from refresh token
     var refresh_token = req.query.refresh_token;
     var authOptions = {
@@ -130,6 +149,7 @@ module.exports = function(db) {
 
     request.post(authOptions, function(error, response, body) {
       if (!error && response.statusCode === 200) {
+        //@@@@@@@@@ HERE -- add access_token, refresh_token
         var access_token = body.access_token;
         res.send({
           'access_token': access_token
