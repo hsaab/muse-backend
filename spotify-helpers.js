@@ -1,7 +1,7 @@
 var bodyParser = require('body-parser');
-var request = require('request'); // "Request" library
 var querystring = require('querystring');
 var cookieParser = require('cookie-parser');
+var request = require('request-promise');
 
 var client_id = process.env.SPOTIFY_CLIENTID; // Your client id
 var client_secret = process.env.SPOTIFY_SECRET; // Your secret

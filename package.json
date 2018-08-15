@@ -17,6 +17,7 @@
     "nodemon": "^1.18.3",
     "pg": "^7.4.3",
     "querystring": "^0.2.0",
-    "request": "^2.88.0"
+    "request": "^2.88.0",
+    "request-promise": "^4.2.2"
   }
 }
