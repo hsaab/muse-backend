@@ -2,23 +2,13 @@ var express = require("express");
 var bodyParser = require('body-parser');
 var express = require('express'); // Express web server framework
 var request = require('request'); // "Request" library
-var cors = require('cors');
 var querystring = require('querystring');
 var cookieParser = require('cookie-parser');
+var helpers = require("./spotify-helpers.js");
 
 var client_id = process.env.SPOTIFY_CLIENTID; // Your client id
 var client_secret = process.env.SPOTIFY_SECRET; // Your secret
 var redirect_uri = process.env.SPOTIFY_REDIRECTURI; // Your redirect uri
-
-var generateRandomString = function(length) {
-  var text = '';
-  var possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-
-  for (var i = 0; i < length; i++) {
-    text += possible.charAt(Math.floor(Math.random() * possible.length));
-  }
-  return text;
-};
 
 var stateKey = 'spotify_auth_state';
 
@@ -26,14 +16,9 @@ var router = express.Router();
 
 router.use(bodyParser.json());
 router.use(bodyParser.urlencoded({ extended: false }));
-router.use(cors());
 router.use(cookieParser());
 
 module.exports = function(db) {
-
-  router.get('/yo', function(req, res) {
-    res.send("yoyo");
-  });
 
   router.get('/test', function(req, res) {
     var email = req.query.email || null;
@@ -52,8 +37,9 @@ module.exports = function(db) {
   });
 
   router.get('/login', function(req, res) {
-    var state = generateRandomString(16);
+    var state = helpers.generateRandomString(16);
     res.cookie(stateKey, state);
+
     db.query(`INSERT INTO users (email, location, state) VALUES ($1, $2, $3)`,
     [req.query.email, req.query.location, state])
       .then(() => {
@@ -73,13 +59,11 @@ module.exports = function(db) {
       })
   });
 
-  router.get('/callback', function(req, res) {
-    // your application requests refresh and access tokens
-    // after checking the state parameter
+  router.get('/callback', async function(req, res) {
     var code = req.query.code || null;
     var state = req.query.state || null;
     var storedState = req.cookies ? req.cookies[stateKey] : null;
-    console.log(req.cookies);
+
     if (state === null || state !== storedState) {
       res.redirect('/#' +
         querystring.stringify({
@@ -87,49 +71,17 @@ module.exports = function(db) {
         }));
     } else {
       res.clearCookie(stateKey);
-      var authOptions = {
-        url: 'https://accounts.spotify.com/api/token',
-        form: {
-          code: code,
-          redirect_uri: redirect_uri,
-          grant_type: 'authorization_code'
-        },
-        headers: {
-          'Authorization': 'Basic ' + (new Buffer(client_id + ':' + client_secret).toString('base64'))
-        },
-        json: true
-      };
-      request.post(authOptions, function(error, response, body) {
-        if (!error && response.statusCode === 200) {
-
-          var access_token = body.access_token;
-          var refresh_token = body.refresh_token;
-
-          var options = {
-            url: 'https://api.spotify.com/v1/me/top/artists',
-            headers: { 'Authorization': 'Bearer ' + access_token },
-            json: true
-          };
-          // use the access token to access the Spotify Web API
-          request.get(options, function(error, response, body) {
-            let artistInfo = JSON.stringify(body.items);
-            db.query(`UPDATE users SET access_token = $1, refresh_token = $2, artists = $3 WHERE state = $4`,
-              [access_token, refresh_token, artistInfo, state])
-              .then(() => {
-                res.redirect('https://muse-hs.herokuapp.com/');
-              })
-              .catch((e) => {
-                console.log(e);
-                res.status(500).json({ success: false });
-              })
-          });
-        } else {
-          res.redirect('/#' +
-            querystring.stringify({
-              error: 'invalid_token'
-            }));
-        }
-      });
+      let tokens = await helpers.getToken(code);
+      let artistData = await helpers.getArtists(tokens, state);
+      db.query(`UPDATE users SET access_token = $1, refresh_token = $2, artists = $3 WHERE state = $4`,
+        [tokens.access_token, tokens.refresh_token, artistData, state])
+        .then(() => {
+          res.redirect('localhost:3000');
+        })
+        .catch((e) => {
+          console.log(e);
+          res.status(500).json({ success: false });
+        })
     }
   });
 
