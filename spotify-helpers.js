@@ -33,9 +33,7 @@ var getToken = async function(code) {
       },
       json: true
     };
-    let result = await request.post(authOptions);
-    let data = await result.body;
-    console.log(result, data);
+    let data = await request.post(authOptions);
     return data;
   } catch (e) {
     console.log('getting token error', e);
@@ -49,10 +47,8 @@ var getArtists = async function(tokens, state) {
     headers: { 'Authorization': 'Bearer ' + tokens.access_token },
     json: true
   };
-  let result = await request.get(options);
-  let data = await result.body;
-  console.log(data);
-  return JSON.stringify(data);
+  let data = await request.get(options);
+  return JSON.stringify(data.items);
 }
 
 module.exports = { generateRandomString, getToken, getArtists };
