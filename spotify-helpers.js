@@ -48,8 +48,8 @@ var getArtists = async function(tokens, state) {
     json: true
   };
   let result = await request.get(options);
-  let data = await JSON.stringify(result.body.items);
-  return data;
+  console.log(result);
+  return JSON.stringify(result.body.items);
 }
 
 module.exports = { generateRandomString, getToken, getArtists };
