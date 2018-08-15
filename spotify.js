@@ -38,7 +38,7 @@ module.exports = function(db) {
   router.get('/test', function(req, res) {
     var email = req.query.email || null;
     var location = req.query.location || null;
-    db.query(`SELECT email, location FROM users WHERE email = $1, location = $2`, [email, location])
+    db.query(`SELECT email, location FROM users WHERE email = $1 AND location = $2`, [email, location])
       .then((result) => {
         if(result.rowCount === 1) {
           res.json({ success: true, existing: true });
@@ -47,7 +47,7 @@ module.exports = function(db) {
         }
       })
       .catch((e) => {
-        res.status(500).json({ success: false });
+        res.status(500).json({ success: false, e });
       })
   });
 
