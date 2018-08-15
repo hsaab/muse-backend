@@ -51,11 +51,11 @@ module.exports = function(db) {
       })
   });
 
-  router.post('/login', function(req, res) {
+  router.get('/login', function(req, res) {
     var state = generateRandomString(16);
     res.cookie(stateKey, state);
     db.query(`INSERT INTO users (email, location, state) VALUES ($1, $2, $3)`,
-    [req.body.email, req.body.location, state])
+    [req.query.email, req.query.location, state])
       .then(() => {
         var scope = 'user-top-read';
         res.redirect('https://accounts.spotify.com/authorize?' +
