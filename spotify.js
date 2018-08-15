@@ -35,7 +35,7 @@ module.exports = function(db) {
     res.send("yoyo");
   });
 
-  router.get('test', function(req, res) {
+  router.get('/test', function(req, res) {
     var email = req.query.email || null;
     var location = req.query.location || null;
     db.query(`SELECT email, location FROM users WHERE email = $1, location = $2`, [email, location])
