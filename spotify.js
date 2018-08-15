@@ -70,7 +70,7 @@ module.exports = function(db) {
             redirect_uri: redirect_uri,
             state: state
           }));
-      });
+      })
       .catch((e) => {
         res.status(500).json({ success: false });
       })
