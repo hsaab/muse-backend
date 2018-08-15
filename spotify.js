@@ -51,13 +51,9 @@ module.exports = function(db) {
       })
   });
 
-  router.get('/login', function(req, res) {
-    //here check if we already have user
-    //if we already have user then send us back saying there's already a user
-
+  router.post('/login', function(req, res) {
     var state = generateRandomString(16);
     res.cookie(stateKey, state);
-    // application requests authorization
     db.query(`INSERT INTO users (email, location, state) VALUES ($1, $2, $3)`,
     [req.body.email, req.body.location, state])
       .then(() => {
@@ -82,6 +78,7 @@ module.exports = function(db) {
     var code = req.query.code || null;
     var state = req.query.state || null;
     var storedState = req.cookies ? req.cookies[stateKey] : null;
+    console.log(req.cookies);
     if (state === null || state !== storedState) {
       res.redirect('/#' +
         querystring.stringify({
@@ -115,8 +112,7 @@ module.exports = function(db) {
           // use the access token to access the Spotify Web API
           request.get(options, function(error, response, body) {
             db.query(`INSERT INTO users (access_token, refresh_token, artists) VALUES($1, $2, $3)
-            WHERE state = $4`,
-            [access_token, refresh_token, body.items, state])
+            WHERE state = $4`, [access_token, refresh_token, body.items, state])
               .then(() => {
                 res.redirect('https://muse-hs.herokuapp.com/');
               })
