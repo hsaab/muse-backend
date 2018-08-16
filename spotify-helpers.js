@@ -33,23 +33,44 @@ var getToken = async function(code) {
       },
       json: true
     };
-    let data = await request.post(authOptions);
+    const data = await request.post(authOptions);
     return data;
   } catch (e) {
-    console.log('getting token error', e);
+    console.log('Error getting token', e);
   }
 }
 
-var getArtists = async function(tokens, state) {
-  console.log(tokens);
-  var options = {
-    url: 'https://api.spotify.com/v1/me/top/artists',
-    headers: { 'Authorization': 'Bearer ' + tokens.access_token },
-    json: true
-  };
-  let data = await request.get(options);
-  console.log("artist info", data);
-  return JSON.stringify(data.items);
+var getRefresh = async function(refresh_token) {
+  try {
+    var authOptions = {
+      url: 'https://accounts.spotify.com/api/token',
+      headers: { 'Authorization': 'Basic ' + (new Buffer(client_id + ':' + client_secret).toString('base64')) },
+      form: {
+        grant_type: 'refresh_token',
+        refresh_token: refresh_token
+      },
+      json: true
+    };
+
+    const data = await request.post(authOptions);
+    return data;
+  } catch (error) {
+    console.log("Error getting refresh_token", error);
+  }
 }
 
-module.exports = { generateRandomString, getToken, getArtists };
+var getArtists = async function(access_token) {
+  try {
+    var options = {
+      url: 'https://api.spotify.com/v1/me/top/artists',
+      headers: { 'Authorization': 'Bearer ' + access_token },
+      json: true
+    };
+    const data = await request.get(options);
+    return JSON.stringify(data.items);
+  } catch (e) {
+    console.log("Error getting artists", e);
+  }
+}
+
+module.exports = { generateRandomString, getToken, getArtists, getRefresh };
