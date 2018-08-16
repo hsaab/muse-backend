@@ -73,4 +73,14 @@ var getArtists = async function(access_token) {
   }
 }
 
-module.exports = { generateRandomString, getToken, getArtists, getRefresh };
+var grabToken = async function(db) {
+  try {
+    let result = await db.query(`SELECT refresh_token FROM users WHERE email = $1 AND location = $2`, [email, location]);
+    console.log(result);
+    return result.rows[0].refresh_token;
+  } catch(error) {
+    console.log("Error grabbing token", error);
+  }
+}
+
+module.exports = { generateRandomString, getToken, getArtists, getRefresh, grabToken };

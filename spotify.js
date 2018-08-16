@@ -1,18 +1,17 @@
-const express = require("express");
-const bodyParser = require('body-parser');
-const express = require('express'); // Express web server framework
-const request = require('request'); // "Request" library
-const querystring = require('querystring');
-const cookieParser = require('cookie-parser');
-const helpers = require("./spotify-helpers.js");
+let express = require("express");
+let bodyParser = require('body-parser');
+let request = require('request'); // "Request" library
+let querystring = require('querystring');
+let cookieParser = require('cookie-parser');
+let helpers = require("./spotify-helpers.js");
 
-const client_id = process.env.SPOTIFY_CLIENTID; // Your client id
-const client_secret = process.env.SPOTIFY_SECRET; // Your secret
-const redirect_uri = process.env.SPOTIFY_REDIRECTURI; // Your redirect uri
+let client_id = process.env.SPOTIFY_CLIENTID; // Your client id
+let client_secret = process.env.SPOTIFY_SECRET; // Your secret
+let redirect_uri = process.env.SPOTIFY_REDIRECTURI; // Your redirect uri
 
-const stateKey = 'spotify_auth_state';
+let stateKey = 'spotify_auth_state';
 
-const router = express.Router();
+let router = express.Router();
 
 router.use(bodyParser.json());
 router.use(bodyParser.urlencoded({ extended: false }));
@@ -91,15 +90,11 @@ module.exports = function(db) {
   router.get('/refresh', async function(req, res) {
     let email = req.query.email;
     let location = req.query.location;
-    db.query(`SELECT refresh_token FROM users WHERE email = $1 AND location = $2`, [email, location])
-      .then((result) => {
-        let refresh_token = result.rows[0].refresh_token;
-        let new_access_token = await helpers.getRefresh(refresh_token);
-        let new_artist_data = await helpers.getArtists(new_access_token);
-        
-        db.query(`UPDATE users SET access_token = $1, artists = $2 WHERE email = $3 AND location = $4`,
-          [new_access_token, new_artist_data, email, location])
-      })
+    let refresh_token = await helpers.grabToken(db);
+    let new_access_token = await helpers.getRefresh(refresh_token);
+    let new_artist_data = await helpers.getArtists(new_access_token);
+    db.query(`UPDATE users SET access_token = $1, artists = $2 WHERE email = $3 AND location = $4`,
+      [new_access_token, new_artist_data, email, location])
       .catch((e) => {
         console.log("Error grabbing refresh token and artist data", e);
         res.status(500).json({ success: false });
