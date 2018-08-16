@@ -90,9 +90,10 @@ module.exports = function(db) {
   router.get('/refresh', async function(req, res) {
     let email = req.query.email;
     let location = req.query.location;
-    let refresh_token = await helpers.grabToken(db);
+    let refresh_token = await helpers.grabToken(db, email, location);
     let new_access_token = await helpers.getRefresh(refresh_token);
     let new_artist_data = await helpers.getArtists(new_access_token);
+    console.log("CHECKING DATA", refresh_token, new_artist_data, new_access_token);
     db.query(`UPDATE users SET access_token = $1, artists = $2 WHERE email = $3 AND location = $4`,
       [new_access_token, new_artist_data, email, location])
       .catch((e) => {
