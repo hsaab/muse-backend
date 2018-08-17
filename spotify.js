@@ -75,10 +75,12 @@ module.exports = function(db) {
       let tokens = await helpers.getToken(code);
       let artistData = await helpers.getArtists(tokens.access_token);
 
-      db.query(`UPDATE users SET access_token = $1, refresh_token = $2, artists = $3 WHERE state = $4`,
+      db.query(`UPDATE users SET access_token = $1, refresh_token = $2, artists = $3 WHERE state = $4 RETURNING email, location`,
         [tokens.access_token, tokens.refresh_token, artistData, state])
-        .then(() => {
-          res.redirect(`localhost:3000`); //need to change this to heroku app
+        .then((result) => {
+          let email = result.rows[0].email;
+          let location = result.rows[0].location;
+          helpers.updateArtists(email, location);
         })
         .catch((e) => {
           console.log("Error at callback for Spotify login", e);
@@ -93,9 +95,11 @@ module.exports = function(db) {
     let refresh_token = await helpers.grabToken(db, email, location);
     let new_access_token = await helpers.getRefresh(refresh_token);
     let new_artist_data = await helpers.getArtists(new_access_token);
-    console.log("CHECKING DATA", refresh_token, new_artist_data, new_access_token);
     db.query(`UPDATE users SET access_token = $1, artists = $2 WHERE email = $3 AND location = $4`,
       [new_access_token, new_artist_data, email, location])
+      .then((result) => {
+        res.json({ success: true });
+      })
       .catch((e) => {
         console.log("Error grabbing refresh token and artist data", e);
         res.status(500).json({ success: false });

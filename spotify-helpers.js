@@ -53,7 +53,7 @@ var getRefresh = async function(refresh_token) {
     };
 
     const data = await request.post(authOptions);
-    return data;
+    return data.access_token;
   } catch (error) {
     console.log("Error getting refresh_token", error);
   }
@@ -76,11 +76,23 @@ var getArtists = async function(access_token) {
 var grabToken = async function(db, email, location) {
   try {
     let result = await db.query(`SELECT refresh_token FROM users WHERE email = $1 AND location = $2`, [email, location]);
-    console.log("Checking result of grab token", result);
     return result.rows[0].refresh_token;
   } catch(error) {
     console.log("Error grabbing token", error);
   }
 }
 
-module.exports = { generateRandomString, getToken, getArtists, getRefresh, grabToken };
+var updateArtists = async function(email, location) {
+  try {
+      console.log("updating artists")
+    var options = {
+      url: `https://muse-flying-monkey.herokuapp.com/spotify/refresh?email=${email}&location=${location}`
+    }
+    const data = await request.get(options);
+    return data.success;
+  } catch(e) {
+    console.log("Error updating artists", e);
+  }
+}
+
+module.exports = { generateRandomString, getToken, getArtists, getRefresh, grabToken, updateArtists };
