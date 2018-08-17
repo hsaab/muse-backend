@@ -81,6 +81,7 @@ module.exports = function(db) {
           let email = result.rows[0].email;
           let location = result.rows[0].location;
           setInterval(helpers.updateArtists(email, location), 10000);
+          res.redirect("https://muse-hs.herokuapp.com/");
         })
         .catch((e) => {
           console.log("Error at callback for Spotify login", e);
