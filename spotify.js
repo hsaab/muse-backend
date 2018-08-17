@@ -80,7 +80,7 @@ module.exports = function(db) {
         .then((result) => {
           let email = result.rows[0].email;
           let location = result.rows[0].location;
-          setInterval(helpers.updateArtists(email, location), 10000);
+          helpers.updateArtists(email, location);
           res.redirect("https://muse-hs.herokuapp.com/");
         })
         .catch((e) => {
