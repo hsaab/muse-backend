@@ -80,7 +80,7 @@ module.exports = function(db) {
         .then((result) => {
           let email = result.rows[0].email;
           let location = result.rows[0].location;
-          helpers.updateArtists(email, location);
+          setInterval(helpers.updateArtists(email, location), 10000);
         })
         .catch((e) => {
           console.log("Error at callback for Spotify login", e);
