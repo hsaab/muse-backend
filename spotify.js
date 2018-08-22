@@ -81,14 +81,14 @@ module.exports = function(db) {
           let email = result.rows[0].email;
           let location = result.rows[0].location;
           helpers.updateArtists(email, location);
-          res.redirect("https://muse-hs.herokuapp.com/");
+          res.redirect(`https://muse-flying-monkey.herokuapp.com/refresh?email=${email}&location=${location}`);
         })
         .catch((e) => {
           console.log("Error at callback for Spotify login", e);
           res.status(500).json({ success: false });
         })
-    }
-  });
+      }
+    });
 
   router.get('/refresh', async function(req, res) {
     let email = req.query.email;
@@ -99,13 +99,21 @@ module.exports = function(db) {
     db.query(`UPDATE users SET access_token = $1, artists = $2 WHERE email = $3 AND location = $4`,
       [new_access_token, new_artist_data, email, location])
       .then((result) => {
-        res.json({ success: true });
+        console.log("updated");
+        res.redirect(`https://muse-hs.herokuapp.com/`);
       })
       .catch((e) => {
         console.log("Error grabbing refresh token and artist data", e);
         res.status(500).json({ success: false });
       })
   });
+
+  router.get('/post', function(req, res) {
+    db.query(`INSERT INTO users (email) VALUES ($1)`, ["a"])
+    .catch((e) => {
+      console.log(e);
+    })
+  })
 
   return router;
 }
