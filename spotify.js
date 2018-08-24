@@ -81,7 +81,7 @@ module.exports = function(db) {
           let email = result.rows[0].email;
           let location = result.rows[0].location;
           helpers.updateArtists(email, location);
-          res.redirect(`https://muse-flying-monkey.herokuapp.com/refresh?email=${email}&location=${location}`);
+          res.redirect(`https://muse-hs.herokuapp.com`);
         })
         .catch((e) => {
           console.log("Error at callback for Spotify login", e);
@@ -90,6 +90,9 @@ module.exports = function(db) {
       }
     });
 
+  //Need to install node scheduler and then use cron
+  //Then need to bring in updateartists function here or to server
+  //Then use node schdeudler and cron to run function every day at night
   router.get('/refresh', async function(req, res) {
     let email = req.query.email;
     let location = req.query.location;
@@ -107,13 +110,6 @@ module.exports = function(db) {
         res.status(500).json({ success: false });
       })
   });
-
-  router.get('/post', function(req, res) {
-    db.query(`INSERT INTO users (email) VALUES ($1)`, ["a"])
-    .catch((e) => {
-      console.log(e);
-    })
-  })
 
   return router;
 }

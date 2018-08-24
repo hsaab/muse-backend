@@ -6,6 +6,7 @@ let spotify = require('./spotify.js');
 let path = require('path');
 let helmet = require('helmet');
 let RateLimit = require('express-rate-limit');
+var cron = require("node-cron");
 
 var app = express();
 
@@ -34,6 +35,10 @@ app.use(function(req, res, next) {
 });
 
 app.use('/spotify', spotify(db));
+
+cron.schedule("*/5 * * * * *", function() {
+  console.log("running a task every minute");
+});
 
 var port = process.env.PORT || 3001;
 app.listen(port);
