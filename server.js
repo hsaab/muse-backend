@@ -2,12 +2,13 @@ let express = require("express");
 let cors = require("cors");
 let bodyParser = require('body-parser');
 let db = require('./pool.js');
-let spotify = require('./spotify.js');
+let spotify = require('./api/spotify.js');
+let muse = require('./api/muse.js');
+let tm = require("./api/ticketmaster.js");
 let path = require('path');
 let helmet = require('helmet');
 let RateLimit = require('express-rate-limit');
 var cron = require("node-cron");
-var updateArtists = require("./spotify-helpers.js").updateArtists;
 
 var app = express();
 
@@ -37,33 +38,12 @@ app.use(function(req, res, next) {
 
 app.use('/spotify', spotify(db));
 
-cron.schedule("0 0 0 * * *", async function() {
-  // PUT THE BELOW IN A HELPER
-  try {
-    let data = await db.query(`SELECT email, location FROM users`);
-    let userInfo = await data.rows;
-    userInfo.forEach(function(user) {
-      updateArtists(user.email, user.location);
-    });
-  } catch(e) {
-    console.log(e, "Error in recurring update of user artist info");
-  }
-//    IN A NEW FUNCTION
-//      let userData = await db.query(`SELECT email, location, artists from users`);
-//      userData.forEach(async function(data) {
-//        let relevantConcerts = [];
-//        data.artist.forEach(async function(artist) {
-//           let concertInfo = await getSongkick(data.email, data.location, artist);
-//           if(concertInfo.dates === within range) relevantConcerts.push(concertInfo);
-//        })
-//        if(relevantConcerts.length > 1) sendEmail(relevantConcerts);
-//     })
+// muse.resolveArtists(db)
+muse.resolveConcerts(db);
 //
-//  For each artist once updated send request to Songkick looking for specific artists within 3 week time frame
-//  If find any matches, store matches in an array
-//  Once search is done, use array of concert objects to populate email
-//  Send email
-});
+// cron.schedule("0 0 0 * * *", async function() {
+//
+// });
 
 var port = process.env.PORT || 3001;
 app.listen(port);

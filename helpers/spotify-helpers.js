@@ -84,7 +84,6 @@ var grabToken = async function(db, email, location) {
 
 var updateArtists = async function(email, location) {
   try {
-    console.log("updating artists")
     var options = {
       url: `https://muse-flying-monkey.herokuapp.com/spotify/refresh?email=${email}&location=${location}`
     }

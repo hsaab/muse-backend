@@ -3,7 +3,7 @@ let bodyParser = require('body-parser');
 let request = require('request'); // "Request" library
 let querystring = require('querystring');
 let cookieParser = require('cookie-parser');
-let helpers = require("./spotify-helpers.js");
+let helpers = require("../helpers/spotify-helpers.js");
 
 let client_id = process.env.SPOTIFY_CLIENTID; // Your client id
 let client_secret = process.env.SPOTIFY_SECRET; // Your secret
@@ -90,9 +90,6 @@ module.exports = function(db) {
       }
     });
 
-  //Need to install node scheduler and then use cron
-  //Then need to bring in updateartists function here or to server
-  //Then use node schdeudler and cron to run function every day at night
   router.get('/refresh', async function(req, res) {
     let email = req.query.email;
     let location = req.query.location;
@@ -102,7 +99,6 @@ module.exports = function(db) {
     db.query(`UPDATE users SET access_token = $1, artists = $2 WHERE email = $3 AND location = $4`,
       [new_access_token, new_artist_data, email, location])
       .then((result) => {
-        console.log("updated");
         res.redirect(`https://muse-hs.herokuapp.com/`);
       })
       .catch((e) => {
