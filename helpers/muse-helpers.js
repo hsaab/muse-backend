@@ -9,4 +9,12 @@ async function addConcerts(db, concert, user) {
   }
 }
 
-module.exports = { addConcerts };
+async function resetConcerts(db, user) {
+  try {
+    db.query(`UPDATE users SET concerts = '[]' WHERE email = $1`, [user.email]);
+  } catch(e) {
+    console.log("Error reseting concerts in DB", e);
+  }
+}
+
+module.exports = { addConcerts, resetConcerts };

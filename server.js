@@ -39,7 +39,8 @@ app.use(function(req, res, next) {
 app.use('/spotify', spotify(db));
 
 // muse.resolveArtists(db)
-muse.resolveConcerts(db);
+// muse.resolveConcerts(db);
+// muse.resolveEmail(db);
 //
 // cron.schedule("0 0 0 * * *", async function() {
 //

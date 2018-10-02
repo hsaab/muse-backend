@@ -5,6 +5,8 @@ let cookieParser = require('cookie-parser');
 let tm_helper = require("../helpers/tm-helpers.js");
 let muse_helper = require("../helpers/muse-helpers.js");
 var spot_helper = require("../helpers/spotify-helpers.js");
+var nodemailer = require('nodemailer');
+var Email = require('email-templates');
 
 async function resolveArtists(db) {
   try {
@@ -22,17 +24,23 @@ async function resolveConcerts(db) {
   try {
     let data = await db.query(`SELECT artists, email, location FROM users`);
     let userInfo = await data.rows;
-    userInfo.forEach(function(user) {
-
+    userInfo.forEach(async function(user) {
+      let reset = await muse_helper.resetConcerts(db, user);
       user.artists.forEach((async function(artist, i) {
         setTimeout(async function() {
+          // For each artist in a user's profile, find if there are any upcoming concerts through TM
           let concert = await tm_helper.getConcerts(artist.name, user.location);
+
+          // If there are concerts for a certain artists, get the details on those concert and add to the database
           if(concert) {
-            // 1 - ADD ANOTHER TM API CALL HERE TO get the purchase link for tickets
-            // 2 - EDIT OBJECT THAT WE ARE ADDING IN TO THE DB
-            let add = await muse_helper.addConcerts(db, concert, user);
+            concert.forEach((async function(id, x) {
+              setTimeout(async function() {
+                let details = await tm_helper.getDetails(id);
+                let add = await muse_helper.addConcerts(db, details, user);
+              }, 10000 * x);
+            }))
           }
-        }, 1000 * i);
+        }, 10000 * i);
       }))
     })
   } catch(e) {
@@ -40,6 +48,46 @@ async function resolveConcerts(db) {
   }
 }
 
-// CREATE another
+async function resolveEmail(db) {
+  let data = await db.query(`SELECT concerts, email, location FROM users`);
+  let userInfo = await data.rows;
 
-module.exports = { resolveArtists, resolveConcerts };
+  userInfo.forEach(function(user) {
+    try {
+      const smtpTransport = nodemailer.createTransport({
+          service: 'gmail',
+          auth: {
+            user: 'apollo.muse.concerts@gmail.com',
+            pass: process.env.MUSE_EMAIL_PASSWORD
+          }
+      });
+      const email = new Email({
+        message: {
+          from: 'Apollo @ Muse <apollo.muse.concerts@gmail.com>'
+        },
+        send: true
+        transport: smtpTransport,
+      });
+      email.send({
+          text: "yoo",
+          message: {
+            to: user.email
+          },
+          locals: {
+            name: 'Elon'
+          }
+        })
+      .then(function (result) {
+        console.log("successful message", result);
+      })
+      .catch(function (error) {
+        console.log(error);
+      })
+    } catch(e) {
+      db.query(`UPDATE users SET emailSent = false WHERE email = $1`, [user.email]);
+      console.log("Trouble sending email", e);
+    }
+  });
+}
+
+module.exports = { resolveArtists, resolveConcerts, resolveEmail };
