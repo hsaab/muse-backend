@@ -8,7 +8,7 @@ let tm = require("./api/ticketmaster.js");
 let path = require('path');
 let helmet = require('helmet');
 let RateLimit = require('express-rate-limit');
-var cron = require("node-cron");
+let cron = require("node-cron");
 
 var app = express();
 
@@ -40,7 +40,7 @@ app.use('/spotify', spotify(db));
 
 // muse.resolveArtists(db)
 // muse.resolveConcerts(db);
-// muse.resolveEmail(db);
+muse.resolveEmail(db);
 //
 // cron.schedule("0 0 0 * * *", async function() {
 //

@@ -5,8 +5,6 @@ let cookieParser = require('cookie-parser');
 let tm_helper = require("../helpers/tm-helpers.js");
 let muse_helper = require("../helpers/muse-helpers.js");
 var spot_helper = require("../helpers/spotify-helpers.js");
-var nodemailer = require('nodemailer');
-var Email = require('email-templates');
 
 async function resolveArtists(db) {
   try {
@@ -54,35 +52,7 @@ async function resolveEmail(db) {
 
   userInfo.forEach(function(user) {
     try {
-      const smtpTransport = nodemailer.createTransport({
-          service: 'gmail',
-          auth: {
-            user: 'apollo.muse.concerts@gmail.com',
-            pass: process.env.MUSE_EMAIL_PASSWORD
-          }
-      });
-      const email = new Email({
-        message: {
-          from: 'Apollo @ Muse <apollo.muse.concerts@gmail.com>'
-        },
-        send: true
-        transport: smtpTransport,
-      });
-      email.send({
-          text: "yoo",
-          message: {
-            to: user.email
-          },
-          locals: {
-            name: 'Elon'
-          }
-        })
-      .then(function (result) {
-        console.log("successful message", result);
-      })
-      .catch(function (error) {
-        console.log(error);
-      })
+      
     } catch(e) {
       db.query(`UPDATE users SET emailSent = false WHERE email = $1`, [user.email]);
       console.log("Trouble sending email", e);
