@@ -10,43 +10,33 @@ const transport = nodemailer.createTransport({
     service: "Gmail"
 });
 
-let user = { name: "hassan",
-    email: "hsaab310@gmail.com" }
-
-function sendEmail(templateName, user, context) {
+function send(templateName, user) {
   let email = new Email({
-     message: { from: 'apollo.muse.concerts@gmail.com' },
+     message: { from: 'Apollo @ Muse' },
      transport,
-     send: true,
-     preview: false,
+     send: false,
+     preview: true,
      views: {
-        root: '../emails',
+        root: './emails',
         options: {
             extension: 'hbs'
         }
       }
    });
-  console.log('1')
-  return new Promise(function(resolve, reject) {
-    console.log('2')
-    email.send({
-      template: 'concerts',
-      message: {
-        to: user.email
-      },
-      locals: {
-        name: context.name,
-        email: context.email
-      }
-    })
-    .then((result) => {
-      console.log('3');
-      console.log(result);
-    })
-    .catch((err) => {
-      console.log(err);
-    })
+  email.send({
+    template: templateName,
+    message: {
+      to: user.email
+    },
+    locals: {
+      name: user.name,
+      location: user.location,
+      concerts: user.concerts
+    }
+  })
+  .then((result) => {
+    console.log(result);
   })
 }
 
-sendEmail('concerts', user, user);
+module.exports = { send };

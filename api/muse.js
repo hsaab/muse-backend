@@ -4,7 +4,9 @@ let querystring = require('querystring');
 let cookieParser = require('cookie-parser');
 let tm_helper = require("../helpers/tm-helpers.js");
 let muse_helper = require("../helpers/muse-helpers.js");
-var spot_helper = require("../helpers/spotify-helpers.js");
+let spot_helper = require("../helpers/spotify-helpers.js");
+let email_helper = require("../helpers/email-helpers.js");
+let moment = require("moment");
 
 async function resolveArtists(db) {
   try {
@@ -23,7 +25,7 @@ async function resolveConcerts(db) {
     let data = await db.query(`SELECT artists, email, location FROM users`);
     let userInfo = await data.rows;
     userInfo.forEach(async function(user) {
-      let reset = await muse_helper.resetConcerts(db, user);
+      await muse_helper.resetConcerts(db, user);
       user.artists.forEach((async function(artist, i) {
         setTimeout(async function() {
           // For each artist in a user's profile, find if there are any upcoming concerts through TM
@@ -33,8 +35,8 @@ async function resolveConcerts(db) {
           if(concert) {
             concert.forEach((async function(id, x) {
               setTimeout(async function() {
-                let details = await tm_helper.getDetails(id);
-                let add = await muse_helper.addConcerts(db, details, user);
+                await tm_helper.getDetails(id);
+                await muse_helper.addConcerts(db, details, user);
               }, 10000 * x);
             }))
           }
@@ -50,9 +52,14 @@ async function resolveEmail(db) {
   let data = await db.query(`SELECT concerts, email, location FROM users`);
   let userInfo = await data.rows;
 
-  userInfo.forEach(function(user) {
+  userInfo.forEach(async function(user) {
     try {
-      
+      user.concerts.forEach(function(concert) {
+        concert.dateTime = moment(concert.dateTime).format("dddd, MMM Do, h:mm a");
+        return concert;
+      })
+      await email_helper.send('concerts', user);
+      db.query(`UPDATE users SET emailSent = true WHERE email = $1`, [user.email]);
     } catch(e) {
       db.query(`UPDATE users SET emailSent = false WHERE email = $1`, [user.email]);
       console.log("Trouble sending email", e);

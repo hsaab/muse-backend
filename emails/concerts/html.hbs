@@ -1,7 +1,22 @@
-<strong>Hey, {{name}},</strong>
-
-Check out these concerts below!
-
-Thanks,
-
-Muse Team
+<html>
+  <head>
+    <link rel="stylesheet" type="text/css" href="/css/styles.css" />
+  </head>
+  <div class="para-big">
+    <span>Hey {{name}},</span>
+    <span>You may be interested to know these artists are performing!</span>
+    <div class="para-small">
+      <span>Thanks,</span>
+      <span>Muse Team</span>
+    </div>
+  </div>
+  <div class="">
+    {{#each concerts}}
+      <div class="">
+        <img src="{{this.image}}" alt="">
+        <span>{{this.dateTime}}</span>
+        <span>{{this.name}}</span>
+      </div>
+    {{/each}}
+  </div>
+</html>
