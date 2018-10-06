@@ -49,7 +49,7 @@ async function resolveConcerts(db) {
 }
 
 async function resolveEmail(db) {
-  let data = await db.query(`SELECT concerts, email, location FROM users`);
+  let data = await db.query(`SELECT concerts, name, email, location FROM users`);
   let userInfo = await data.rows;
 
   userInfo.forEach(async function(user) {
