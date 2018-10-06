@@ -33,9 +33,9 @@ async function resolveConcerts(db) {
 
           // If there are concerts for a certain artists, get the details on those concert and add to the database
           if(concert) {
-            concert.forEach((async function(id, x) {
+            concert.forEach((async function(each, x) {
               setTimeout(async function() {
-                await tm_helper.getDetails(id);
+                let details = await tm_helper.getDetails(each);
                 await muse_helper.addConcerts(db, details, user);
               }, 10000 * x);
             }))
@@ -57,7 +57,7 @@ async function resolveEmail(db) {
       user.concerts.forEach(function(concert) {
         concert.dateTime = moment(concert.dateTime).format("dddd, MMM Do, h:mm a");
         return concert;
-      })
+      });
       await email_helper.send('concerts', user);
       db.query(`UPDATE users SET emailSent = true WHERE email = $1`, [user.email]);
     } catch(e) {

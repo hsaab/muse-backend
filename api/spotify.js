@@ -40,8 +40,8 @@ module.exports = function(db) {
     let state = helpers.generateRandomString(16);
     res.cookie(stateKey, state);
 
-    db.query(`INSERT INTO users (email, location, state) VALUES ($1, $2, $3)`,
-    [req.query.email, req.query.location, state])
+    db.query(`INSERT INTO users (email, location, state, name) VALUES ($1, $2, $3, $4)`,
+    [req.query.email, req.query.location, state, req.query.name])
       .then(() => {
         let scope = 'user-top-read';
         res.redirect('https://accounts.spotify.com/authorize?' +

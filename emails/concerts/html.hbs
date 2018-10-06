@@ -12,10 +12,14 @@
   </div>
   <div class="">
     {{#each concerts}}
-      <div class="">
-        <img src="{{this.image}}" alt="">
-        <span>{{this.dateTime}}</span>
-        <span>{{this.name}}</span>
+      <div class="concert-cont">
+        <img class="pic" src="{{this.image}}" alt="">
+        <div class="details-cont">
+          <span class="detail">{{this.artist}}</span>
+          <span class="detail">{{this.name}}</span>
+          <span class="detail">{{this.dateTime}}</span>
+          <span class="detail"><a href="{{this.url}}">Buy tickets!</a> from ${{this.priceRange.min}} to ${{this.priceRange.max}}</span>
+        </div>
       </div>
     {{/each}}
   </div>

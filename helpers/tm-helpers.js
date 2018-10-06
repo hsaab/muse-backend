@@ -17,10 +17,11 @@ var getConcerts = async function(artist, location) {
     //&city=${location}
     const data = await request.get(authOptions);
     if(data._embedded) {
-      let eventIDs = data._embedded.events.map(function(each) {
-        return each.id;
+      let eventInfo = data._embedded.events.map(function(each) {
+        let obj = Object.assign({}, { id: each.id, artist });
+        return obj;
       })
-      return eventIDs;
+      return eventInfo;
     } else {
       return false;
     }
@@ -29,13 +30,14 @@ var getConcerts = async function(artist, location) {
   }
 }
 
-var getDetails = async function(id) {
+var getDetails = async function(concert) {
   var authOptions = {
-    url: `https://app.ticketmaster.com/discovery/v2/events/${id}.json?apikey=${tm_apiKey}`,
+    url: `https://app.ticketmaster.com/discovery/v2/events/${concert.id}.json?apikey=${tm_apiKey}`,
     json: true
   };
   const data = await request.get(authOptions);
   let detailObj = {
+    artist: concert.artist,
     id: data.id,
     name: data.name,
     url: data.url,
