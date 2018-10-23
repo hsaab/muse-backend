@@ -11,10 +11,10 @@ var getConcerts = async function(artist, location) {
     let start = moment().format();
     let end = moment().add(3, 'weeks').format();
     var authOptions = {
-      url: `https://app.ticketmaster.com/discovery/v2/events.json?apikey=${tm_apiKey}&keyword=${artist}&startDateTime=${start}&endDateTime=${end}&sort=relevance,asc`,
+      url: `https://app.ticketmaster.com/discovery/v2/events.json?apikey=${tm_apiKey}&city=${location}&keyword=${artist}&startDateTime=${start}&endDateTime=${end}&sort=relevance,asc`,
       json: true
     };
-    //&city=${location}
+    console.log(authOptions);
     const data = await request.get(authOptions);
     if(data._embedded) {
       let eventInfo = data._embedded.events.map(function(each) {

@@ -10,12 +10,12 @@ const transport = nodemailer.createTransport({
     service: "Gmail"
 });
 
-function send(templateName, user) {
+async function send(templateName, user) {
   let email = new Email({
      message: { from: 'Apollo @ Muse' },
      transport,
-     send: false,
-     preview: true,
+     send: true,
+     preview: false,
      views: {
         root: './emails',
         options: {
@@ -33,10 +33,7 @@ function send(templateName, user) {
       location: user.location,
       concerts: user.concerts
     }
-  })
-  .then((result) => {
-    console.log(result);
-  })
+  });
 }
 
 module.exports = { send };

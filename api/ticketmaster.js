@@ -14,7 +14,6 @@ module.exports = function() {
 
   app.get('/ticketmaster', async function(req, res) {
     let concerts = await tm_helpers.getConcerts();
-    console.log(concerts);
   });
 
 }

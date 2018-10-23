@@ -38,13 +38,17 @@ app.use(function(req, res, next) {
 
 app.use('/spotify', spotify(db));
 
-// muse.resolveArtists(db)
-// muse.resolveConcerts(db);
-muse.resolveEmail(db);
-//
-// cron.schedule("0 0 0 * * *", async function() {
-//
-// });
+cron.schedule("0 0 0 * * *", async function() {
+  await muse.resolveArtists(db);
+});
+
+cron.schedule("0 15 0 * * *", async function() {
+  await muse.resolveConcerts(db);
+});
+
+cron.schedule("0 30 0 * * *", async function() {
+  await muse.resolveEmail(db);
+});
 
 var port = process.env.PORT || 3001;
 app.listen(port);

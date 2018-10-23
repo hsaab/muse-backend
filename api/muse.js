@@ -37,10 +37,10 @@ async function resolveConcerts(db) {
               setTimeout(async function() {
                 let details = await tm_helper.getDetails(each);
                 await muse_helper.addConcerts(db, details, user);
-              }, 10000 * x);
+              }, 5000 * x);
             }))
           }
-        }, 10000 * i);
+        }, 5000 * i);
       }))
     })
   } catch(e) {
@@ -51,18 +51,19 @@ async function resolveConcerts(db) {
 async function resolveEmail(db) {
   let data = await db.query(`SELECT concerts, name, email, location FROM users`);
   let userInfo = await data.rows;
-
   userInfo.forEach(async function(user) {
-    try {
-      user.concerts.forEach(function(concert) {
-        concert.dateTime = moment(concert.dateTime).format("dddd, MMM Do, h:mm a");
-        return concert;
-      });
-      await email_helper.send('concerts', user);
-      db.query(`UPDATE users SET emailSent = true WHERE email = $1`, [user.email]);
-    } catch(e) {
-      db.query(`UPDATE users SET emailSent = false WHERE email = $1`, [user.email]);
-      console.log("Trouble sending email", e);
+    if(user.concerts.length > 0) {
+      try {
+        user.concerts.forEach(function(concert) {
+          concert.dateTime = moment(concert.dateTime).format("dddd, MMM Do, h:mm a");
+          return concert;
+        });
+        await email_helper.send('concerts', user);
+        db.query(`UPDATE users SET emailSent = true WHERE email = $1`, [user.email]);
+      } catch(e) {
+        db.query(`UPDATE users SET emailSent = false WHERE email = $1`, [user.email]);
+        console.log("Trouble sending email", e);
+      }
     }
   });
 }
