@@ -42,11 +42,11 @@ cron.schedule("0 0 0 * * *", async function() {
   await muse.resolveArtists(db);
 });
 
-cron.schedule("0 15 0 * * *", async function() {
+cron.schedule("0 30 0 * * *", async function() {
   await muse.resolveConcerts(db);
 });
 
-cron.schedule("0 30 0 * * *", async function() {
+cron.schedule("0 0 1 * * *", async function() {
   await muse.resolveEmail(db);
 });
 
