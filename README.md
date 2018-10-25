@@ -15,3 +15,8 @@ Muse's role is to programmatically notify users of concerts they'd love to atten
 3. After pulling artist data, Muse will send an API call to Ticketmaster to determine if there are any upcoming concerts within three weeks for your favorite artists
 
 4. If so, we send an email to you with a link to quickly buy tickets!
+
+## v2 Features
+  * Customize emails according to alert frequency, genres, etc.
+  * Input alerts for specific artists
+  * Better UI for email
