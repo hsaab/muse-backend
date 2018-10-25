@@ -3,12 +3,10 @@ let cors = require("cors");
 let bodyParser = require('body-parser');
 let db = require('./pool.js');
 let spotify = require('./api/spotify.js');
-let muse = require('./api/muse.js');
 let tm = require("./api/ticketmaster.js");
 let path = require('path');
 let helmet = require('helmet');
 let RateLimit = require('express-rate-limit');
-let cron = require("node-cron");
 
 var app = express();
 
@@ -37,18 +35,6 @@ app.use(function(req, res, next) {
 });
 
 app.use('/spotify', spotify(db));
-
-cron.schedule("0 0 0 * * *", async function() {
-  await muse.resolveArtists(db);
-});
-
-cron.schedule("0 30 0 * * *", async function() {
-  await muse.resolveConcerts(db);
-});
-
-cron.schedule("0 0 1 * * *", async function() {
-  await muse.resolveEmail(db);
-});
 
 var port = process.env.PORT || 3001;
 app.listen(port);

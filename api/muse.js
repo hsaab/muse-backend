@@ -30,7 +30,6 @@ async function resolveConcerts(db) {
         setTimeout(async function() {
           // For each artist in a user's profile, find if there are any upcoming concerts through TM
           let concert = await tm_helper.getConcerts(artist.name, user.location);
-
           // If there are concerts for a certain artists, get the details on those concert and add to the database
           if(concert) {
             concert.forEach((async function(each, x) {

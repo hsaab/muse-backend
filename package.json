@@ -4,7 +4,10 @@
   "description": "",
   "main": "api.js",
   "scripts": {
-    "start": "nodemon server.js"
+    "start": "nodemon server.js",
+    "artists": "node ./cron/resolveArtists.js",
+    "concerts": "node ./cron/resolveConcerts.js",
+    "emails": "node ./cron/resolveEmail.js"
   },
   "author": "",
   "license": "ISC",
@@ -17,7 +20,6 @@
     "handlebars": "^4.0.12",
     "helmet": "^3.13.0",
     "moment": "^2.22.2",
-    "node-cron": "^1.2.1",
     "nodemailer": "^4.6.8",
     "nodemon": "^1.18.3",
     "pg": "^7.4.3",

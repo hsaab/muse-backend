@@ -1,26 +1,25 @@
 <html>
   <head>
-    <link rel="stylesheet" type="text/css" href="/css/styles.css" />
+    <link rel="stylesheet" type="text/css" href="/css/styles.css"/>
   </head>
-  <div class="para-big">
-    <span>Hey {{name}},</span>
-    <span>You may be interested to know these artists are performing in {{location}}!</span>
-    <div class="para-small">
-      <span>Thanks,</span>
-      <span>Muse Team</span>
+  <div style="line-height:2em;">
+    <span style="display:block;">Hey {{name}},</span>
+    <span style="display:block; margin:1em 0em;">You may be interested to know these artists are performing in {{location}}!</span>
+    <div style="line-height:1.5em;">
+      <span style="display:block;">Thanks,</span>
+      <span style="display:block; margin-top:1em;">Muse Team</span>
     </div>
   </div>
-  <div class="">
-    {{#each concerts}}
-      <div class="concert-cont">
-        <img class="pic" src="{{this.image}}" alt="">
-        <div class="details-cont">
-          <span class="detail">{{this.artist}}</span>
-          <span class="detail">{{this.name}}</span>
-          <span class="detail">{{this.dateTime}}</span>
-          <span class="detail"><a href="{{this.url}}">Buy tickets!</a> from ${{this.priceRange.min}} to ${{this.priceRange.max}}</span>
-        </div>
-      </div>
-    {{/each}}
-  </div>
+  <div style="width:100%; border: 0.5px solid black; margin-top: 2em;"></div>
+  {{#each concerts}}
+    <div style="height:5em; width:100%; padding:2em 2em; display:inline-block;">
+      <img style="width:auto; height:100%; display:inline-block;" src="{{this.image}}" alt="">
+      <ul style="display:inline-block;">
+        <li style="margin-bottom:0.25em;">{{this.artist}}</li>
+        <li style="margin-bottom:0.25em;">{{this.name}}</li>
+        <li style="margin-bottom:0.25em;">{{this.dateTime}}</li>
+        <li style="margin-bottom:0.25em;"><a href="{{this.url}}">Buy tickets!</a> from ${{this.priceRange.min}} to ${{this.priceRange.max}}</li>
+      </ul>
+    </div>
+  {{/each}}
 </html>
