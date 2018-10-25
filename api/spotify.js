@@ -39,7 +39,7 @@ module.exports = function(db) {
   router.get('/login', function(req, res) {
     let state = helpers.generateRandomString(16);
     res.cookie(stateKey, state);
-    
+
     db.query(`INSERT INTO users (name, email, location, state) VALUES ($1, $2, $3, $4)`,
     [req.query.name, req.query.email, req.query.location, state])
       .then(() => {
@@ -81,7 +81,7 @@ module.exports = function(db) {
           let email = result.rows[0].email;
           let location = result.rows[0].location;
           helpers.updateArtists(email, location);
-          res.redirect(`https://muse-hs.herokuapp.com`);
+          res.redirect(`https://muse-hs.herokuapp.com/success`);
         })
         .catch((e) => {
           console.log("Error at callback for Spotify login", e);
