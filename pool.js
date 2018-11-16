@@ -1,3 +1,10 @@
+if (process.env.NODE_ENV !== 'production') {
+  const result = require("dotenv").config();
+  if (result.error) {
+    console.log(result.error);
+  }
+}
+
 if (!process.env.DATABASE_URI) {
   console.error("DATABASE_URL environment variable missing. Did you run 'source env.sh'?");
   process.exit(1);

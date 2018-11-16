@@ -1,3 +1,10 @@
+if (process.env.NODE_ENV !== 'production') {
+  const result = require("dotenv").config();
+  if (result.error) {
+    console.log(result.error);
+  }
+}
+
 let express = require("express");
 let cors = require("cors");
 let bodyParser = require('body-parser');

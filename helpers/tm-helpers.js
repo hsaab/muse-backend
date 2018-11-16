@@ -4,14 +4,12 @@ var cookieParser = require('cookie-parser');
 var request = require('request-promise');
 var moment = require('moment');
 
-var tm_apiKey = process.env.TM_API_KEY;
-
 var getConcerts = async function(artist, location) {
   try {
     let start = moment().format();
     let end = moment().add(3, 'weeks').format();
     var authOptions = {
-      url: `https://app.ticketmaster.com/discovery/v2/events.json?apikey=${tm_apiKey}&city=${location}&keyword=${artist}&startDateTime=${start}&endDateTime=${end}&sort=relevance,asc`,
+      url: `https://app.ticketmaster.com/discovery/v2/events.json?apikey=${process.env.TM_API_KEY}&city=${location}&keyword=${artist}&startDateTime=${start}&endDateTime=${end}&sort=relevance,asc`,
       json: true
     };
     const data = await request.get(authOptions);
@@ -25,13 +23,13 @@ var getConcerts = async function(artist, location) {
       return false;
     }
   } catch(e) {
-    console.log("Error getting events from Ticketmaster API", e);
+    console.log("Error getting events from Ticketmaster API", e.message);
   }
 }
 
 var getDetails = async function(concert) {
   var authOptions = {
-    url: `https://app.ticketmaster.com/discovery/v2/events/${concert.id}.json?apikey=${tm_apiKey}`,
+    url: `https://app.ticketmaster.com/discovery/v2/events/${concert.id}.json?apikey=${process.env.TM_API_KEY}`,
     json: true
   };
   const data = await request.get(authOptions);
@@ -41,7 +39,7 @@ var getDetails = async function(concert) {
     name: data.name,
     url: data.url,
     image: data.images ? data.images[0].url : null,
-    dateTime: data.dates ? data.dates.start.dateTime : null,
+    dateTime: data.dates ? moment(data.dates.start.dateTime).utcOffset(-8) : null,
     priceRange: {
       min: data.priceRanges ? data.priceRanges[0].min : null,
       max: data.priceRanges ? data.priceRanges[0].max : null,

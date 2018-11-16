@@ -7,7 +7,8 @@ const transport = nodemailer.createTransport({
       user: 'apollo.muse.concerts@gmail.com',
       pass: process.env.MUSE_EMAIL_PASSWORD
     },
-    service: "Gmail"
+    service: "gmail",
+    host: 'smtp.gmail.com',
 });
 
 async function send(templateName, user) {
