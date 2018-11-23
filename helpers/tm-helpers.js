@@ -6,8 +6,8 @@ var moment = require('moment');
 
 var getConcerts = async function(artist, location) {
   try {
-    let start = moment().format();
-    let end = moment().add(3, 'weeks').format();
+    let start = moment().format("YYYY-MM-DD");
+    let end = moment().add(3, 'weeks').format("YYYY-MM-DD");
     console.log(process.env.TM_API_KEY);
     var authOptions = {
       url: `https://app.ticketmaster.com/discovery/v2/events.json?apikey=${process.env.TM_API_KEY}&city=${location}&keyword=${artist}&startDateTime=${start}&endDateTime=${end}&sort=relevance,asc`,
