@@ -12,7 +12,8 @@ var getConcerts = async function(artist, location) {
     var authOptions = {
       url: `https://app.ticketmaster.com/discovery/v2/events.json?apikey=${process.env.TM_API_KEY}&city=${location}&keyword=${artist}&startDateTime=${start}&endDateTime=${end}&sort=relevance,asc`,
       json: true
-    };
+    }
+    console.log(authOptions.url);
     console.log("1");
     const data = await request.get(authOptions);
     console.log("2");
