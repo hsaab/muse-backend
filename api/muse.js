@@ -59,6 +59,7 @@ async function resolveEmail(db) {
         });
         await email_helper.send('concerts', user);
         db.query(`UPDATE users SET emailSent = true WHERE email = $1`, [user.email]);
+        console.log("Email sent to user at ", user.email);
       } catch(e) {
         db.query(`UPDATE users SET emailSent = false WHERE email = $1`, [user.email]);
         console.log("Trouble sending email", e);
