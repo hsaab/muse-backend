@@ -6,24 +6,19 @@ var moment = require('moment');
 
 var getConcerts = async function(artist, location) {
   try {
-    let start = moment().format("YYYY-MM-DD");
-    let end = moment().add(3, 'weeks').format("YYYY-MM-DD");
-    console.log(process.env.TM_API_KEY);
+    let start = moment().format("YYYY-MM-DDTHH:mm:ssZ");
+    let end = moment().add(3, 'weeks').format("YYYY-MM-DDTHH:mm:ssZ");
     var authOptions = {
       url: `https://app.ticketmaster.com/discovery/v2/events.json?apikey=${process.env.TM_API_KEY}&city=${location}&keyword=${artist}&startDateTime=${start}&endDateTime=${end}&sort=relevance,asc`,
       json: true
     }
     console.log(authOptions.url);
-    console.log("1");
     const data = await request.get(authOptions);
-    console.log("2");
     if(data._embedded) {
-      console.log("3");
       let eventInfo = data._embedded.events.map(function(each) {
         let obj = Object.assign({}, { id: each.id, artist });
         return obj;
       })
-      console.log("4");
       return eventInfo;
     } else {
       return false;
