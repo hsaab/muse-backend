@@ -34,8 +34,10 @@ async function resolveConcerts(db) {
           // If there are concerts for a certain artists, get the details on those concert and add to the database
           if(concert) {
             concert.forEach((async function(each, x) {
-              let details = await tm_helper.getDetails(each);
-              await muse_helper.addConcerts(db, details, user);
+              setTimeout(async function() {
+                let details = await tm_helper.getDetails(each);
+                await muse_helper.addConcerts(db, details, user);
+              }, 1000 * x);
             }));
           }
         }, 10000 * i);
