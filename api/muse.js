@@ -38,9 +38,9 @@ async function resolveConcerts(db) {
               let details = await tm_helper.getDetails(each);
               console.log(details);
               await muse_helper.addConcerts(db, details, user);
-            }))
+            }));
           }
-        }, 10000 * i);
+        }, 5000 * i);
       }))
     });
   } catch(e) {
