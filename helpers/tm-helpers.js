@@ -13,6 +13,7 @@ var getConcerts = async function(artist, location) {
       json: true
     }
     const data = await request.get(authOptions);
+    console.log(data);
     if(data._embedded) {
       let eventInfo = data._embedded.events.map(function(each) {
         let obj = Object.assign({}, { id: each.id, artist });

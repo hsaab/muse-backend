@@ -15,6 +15,7 @@ async function resolveArtists(db) {
     userInfo.forEach(function(user) {
       spot_helper.updateArtists(user.email, user.location);
     });
+    console.log("Done resolving artists");
   } catch(e) {
     console.log(e, "Error in recurring update of user artist info");
   }
@@ -32,16 +33,16 @@ async function resolveConcerts(db) {
           let concert = await tm_helper.getConcerts(artist.name, user.location);
           // If there are concerts for a certain artists, get the details on those concert and add to the database
           if(concert) {
+            console.log(concert);
             concert.forEach((async function(each, x) {
-              setTimeout(async function() {
-                let details = await tm_helper.getDetails(each);
-                await muse_helper.addConcerts(db, details, user);
-              }, 5000 * x);
+              let details = await tm_helper.getDetails(each);
+              console.log(details);
+              await muse_helper.addConcerts(db, details, user);
             }))
           }
-        }, 5000 * i);
+        }, 10000 * i);
       }))
-    })
+    });
   } catch(e) {
     console.log(e, "Error grabbing relevant concerts from Ticketmaster");
   }
@@ -59,7 +60,7 @@ async function resolveEmail(db) {
         });
         await email_helper.send('concerts', user);
         db.query(`UPDATE users SET emailSent = true WHERE email = $1`, [user.email]);
-        console.log("Email sent to user at ", user.email);
+        console.log("Done resolving email to ", user.email);
       } catch(e) {
         db.query(`UPDATE users SET emailSent = false WHERE email = $1`, [user.email]);
         console.log("Trouble sending email", e);
