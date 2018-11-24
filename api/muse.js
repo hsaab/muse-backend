@@ -33,14 +33,12 @@ async function resolveConcerts(db) {
           let concert = await tm_helper.getConcerts(artist.name, user.location);
           // If there are concerts for a certain artists, get the details on those concert and add to the database
           if(concert) {
-            console.log(concert);
             concert.forEach((async function(each, x) {
               let details = await tm_helper.getDetails(each);
-              console.log(details);
               await muse_helper.addConcerts(db, details, user);
             }));
           }
-        }, 5000 * i);
+        }, 10000 * i);
       }))
     });
   } catch(e) {
