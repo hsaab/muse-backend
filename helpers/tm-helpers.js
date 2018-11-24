@@ -12,7 +12,6 @@ var getConcerts = async function(artist, location) {
       url: `https://app.ticketmaster.com/discovery/v2/events.json?apikey=${process.env.TM_API_KEY}&city=${location}&keyword=${artist}&startDateTime=${start}&endDateTime=${end}&sort=relevance,asc`,
       json: true
     }
-    console.log(authOptions.url);
     const data = await request.get(authOptions);
     if(data._embedded) {
       let eventInfo = data._embedded.events.map(function(each) {

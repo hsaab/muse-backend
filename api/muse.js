@@ -51,7 +51,7 @@ async function resolveEmail(db) {
   let data = await db.query(`SELECT concerts, name, email, location FROM users`);
   let userInfo = await data.rows;
   userInfo.forEach(async function(user) {
-    if(user.concerts.length > 0) {
+    if(user.concerts && user.concerts.length > 0) {
       try {
         user.concerts.forEach(function(concert) {
           concert.dateTime = moment(concert.dateTime).format("dddd, MMM Do, h:mm a");
