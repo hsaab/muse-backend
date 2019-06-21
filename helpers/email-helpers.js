@@ -1,16 +1,20 @@
 var nodemailer = require("nodemailer");
 var Email = require("email-templates");
 var path = require("path");
+var gmail = require("../api/gmail.js");
 
 const transport = nodemailer.createTransport({
   auth: {
-    user: "apollo.muse@yahoo.com",
-    pass: process.env.MUSE_EMAIL_PASSWORD
+    user: "apollo.muse.concerts@gmail.com",
+    pass: process.env.MUSE_EMAIL_PASSWORD,
+    clientId: process.env.GMAIL_CLIENT_ID,
+    clientSecret: process.env.GMAIL_CLIENT_SECRET,
+    refreshToken: process.env.GMAIL_REFRESH_TOKEN,
+    accessToken: gmail.getAccessToken()
   },
-  host: "smtp.mail.yahoo.com",
   port: 465,
-  service: "yahoo",
-  secure: false
+  service: "gmail",
+  secure: true
 });
 
 async function send(templateName, user) {
