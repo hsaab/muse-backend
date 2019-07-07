@@ -7,7 +7,6 @@ const transport = nodemailer.createTransport({
     user: "apollo.muse.concerts@gmail.com",
     pass: process.env.MUSE_EMAIL_PASSWORD
   },
-  service: "gmail",
   host: "smtp.gmail.com",
   port: 465,
   secure: true
