@@ -8,8 +8,8 @@ const transport = nodemailer.createTransport({
     pass: process.env.MUSE_EMAIL_PASSWORD
   },
   host: "smtp.gmail.com",
-  port: 465,
-  secure: true
+  port: 587,
+  secure: false
 });
 
 async function send(templateName, user) {
