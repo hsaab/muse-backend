@@ -7,7 +7,8 @@
     "start": "nodemon server.js",
     "artists": "node ./cron/resolveArtists.js",
     "concerts": "node ./cron/resolveConcerts.js",
-    "emails": "node ./cron/resolveEmail.js"
+    "emails": "node ./cron/resolveEmail.js",
+    "send emails": "node ./cron/sendEmailRequest.js"
   },
   "author": "",
   "license": "ISC",

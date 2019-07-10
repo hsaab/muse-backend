@@ -49,7 +49,7 @@ app.use(function(req, res, next) {
 });
 
 app.use("/spotify", spotify(db));
-app.get("/sendemail", async function(req, res) {
+app.post("/sendemail", async function(req, res) {
   await muse.resolveEmail(db);
   res.json("ok");
 });
