@@ -7,4 +7,10 @@ if (process.env.NODE_ENV !== "production") {
 
 let request = require("request"); // "Request" library
 
-request.post({ url: "https://muse-flying-monkey.herokuapp.com/sendemail" });
+async function sendEmail() {
+  return await request.post({
+    url: "https://muse-flying-monkey.herokuapp.com/sendemail"
+  });
+}
+
+sendEmail();
