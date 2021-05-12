@@ -22,7 +22,7 @@
     "handlebars": "^4.0.12",
     "helmet": "^3.13.0",
     "moment": "^2.22.2",
-    "nodemailer": "^4.6.8",
+    "nodemailer": "^6.4.16",
     "nodemon": "^1.18.3",
     "pg": "^7.4.3",
     "querystring": "^0.2.0",
