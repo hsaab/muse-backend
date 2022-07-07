@@ -21,7 +21,7 @@
     "express-rate-limit": "^2.12.2",
     "handlebars": "^4.0.12",
     "helmet": "^3.13.0",
-    "moment": "^2.22.2",
+    "moment": "^2.29.4",
     "nodemailer": "^4.6.8",
     "nodemon": "^1.18.3",
     "pg": "^7.4.3",
